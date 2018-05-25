@@ -4,7 +4,7 @@
 (def entities (r/atom [{:text "Someone 1"
                         :id 1
                         :color "red"
-                        :type :me
+                        :type :player
                         :angle 0
                         :x 500
                         :y 200
@@ -51,3 +51,5 @@
 (def mouse-y (r/atom 0))
 
 (def last-projectile-time (r/atom 0))
+
+(def player-id (r/atom 1))

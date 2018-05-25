@@ -1,6 +1,7 @@
 (ns deltaside.cljs.events
   (:require [deltaside.cljs.model.player :as p]
-            [deltaside.cljs.model.global :as global]))
+            [deltaside.cljs.model.global :as global]
+            [deltaside.cljs.xhr :as xhr]))
 
 (defn wrap-coord [coord]
   (mod coord 500))
@@ -17,8 +18,12 @@
         dy (- @p/mouse-y y)]
     (+ (when (> 0 dx) Math/PI) (Math/atan (/ dy dx)))))
 
+(defn current-player? [{:keys [type id]}]
+  (and (= type "player")
+       (= id @p/player-id)))
+
 (defn iterate-player [seconds {:keys [type] :as entity}]
-  (if (= type :me)
+  (if (current-player? entity)
     (-> entity
         (update :x-vel + (* seconds @p/x-thrust))
         (update :y-vel + (* seconds @p/y-thrust))
@@ -30,7 +35,7 @@
              (partial iterate-entity seconds)) entities))
 
 (defn get-player []
-  (first (filter #(= (:type %) :me) @p/entities)))
+  (first (filter current-player? @p/entities)))
 
 (defn new-projectile []
   (let [now (.getTime (js/Date.))
@@ -44,8 +49,15 @@
             (update :y + (* 0.2 y-vel))
             (update :x-vel * 1.5)
             (update :y-vel * 1.5)
-            (assoc :text "pew")
+            (assoc :text "~")
             (assoc :type :projectile))))))
+
+(defn update-game-board []
+  (xhr/ajax "GET" "/api/v1/game/54947df8-0e9e-4471-a2f9-9af509fb5889"
+            :on-success
+            (fn [{:keys [board]}]
+              (let [{:keys [players objects]} board]
+                (reset! p/entities (concat players objects))))))
 
 (defn setup-events []
   (.addEventListener js/document "keydown"
@@ -81,6 +93,9 @@
                 (fn []
                   (when (= @global/screen :game) (swap! p/entities (partial iterate-velocities 0.02))))
                 20)
+
+  (.setInterval js/window update-game-board 2000)
+
   (.addEventListener js/document "mousemove"
                      (fn [e]
                        (reset! p/mouse-x (.-pageX e))

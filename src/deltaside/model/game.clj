@@ -9,28 +9,54 @@
                          {:name "Spencer's Sick Deltaside game"
                           :admin 1                          ;-> player id
                           :board (atom
-                                   {:players {1             ;-> player id
-                                              {:positon [0 0] ;-> [x, y]
-                                               :velocity [1 -1] ;-> [dx, dy]
-                                               :orientation 36} ;-> degrees
-                                              2             ; -> player id
-                                              {:positon [0 0] ;-> [x, y]
-                                               :velocity [1 -1] ;-> [dx, dy]
-                                               :orientation 36}} ;-> degrees
-                                    :objects {1             ;-> object id
-                                              {:type :projectile
-                                               :owner 1     ;-> player id
-                                               :positon [0 0] ;-> [x, y]
-                                               :velocity [1 -1] ;-> [dx, dy]
-                                               :orientation 36} ;-> degrees
-                                              2             ;-> object id
-                                              {:type :astroid
-                                               :owner -1
-                                               :positon [0 0] ;-> [x, y]
-                                               :velocity [1, -1] ;-> [dx, dy]
-                                               :orientation 36}}})}}) ;-> degrees}}
+                                   {:players
+                                    [{:text "Someone 1"
+                                     :id 1
+                                     :color "red"
+                                     :type :player
+                                     :angle 0
+                                     :x 500
+                                     :y 200
+                                     :x-vel 50
+                                     :y-vel -50}
+                                    {:text "Someone 2"
+                                     :color "green"
+                                     :id 2
+                                     :type :player
+                                     :angle 0
+                                     :x 200
+                                     :y 200
+                                     :x-vel 50
+                                     :y-vel -50}
+                                    {:text "Someone 3"
+                                     :color "yellow"
+                                     :id 3
+                                     :type :player
+                                     :angle 0
+                                     :x 300
+                                     :y 300
+                                     :x-vel -50
+                                     :y-vel -50}
+                                    {:text "Someone 4"
+                                     :color "blue"
+                                     :id 4
+                                     :type :player
+                                     :angle 0
+                                     :x 300
+                                     :y 400
+                                     :x-vel 50
+                                     :y-vel 50}]
+                                    :objects [{:text "~"
+                                               :color "blue"
+                                               :id "asdfasdfasfdasdf some UUID"
+                                               :type :projectile
+                                               :angle 0
+                                               :x 300
+                                               :y 400
+                                               :x-vel 50
+                                               :y-vel 50}]})}})
 
-(def games (atom {}))
+(def games (atom example-game-board)) ; TODO change back
 
 (def player-defaults
    {:positon [0 0]
