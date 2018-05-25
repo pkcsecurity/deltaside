@@ -1,26 +1,27 @@
 (ns deltaside.cljs.events
-  (:require [deltaside.cljs.model.player :as p]))
+  (:require [deltaside.cljs.model.player :as p]
+            [deltaside.cljs.model.global :as global]))
 
-(defn iterate-vel [{:keys [x-vel y-vel] :as entity}]
+(defn iterate-vel [seconds {:keys [x-vel y-vel] :as entity}]
   (-> entity
-      (update :x + x-vel)
-      (update :y + y-vel)))
+      (update :x + (* seconds x-vel))
+      (update :y + (* seconds y-vel))))
 
 (defn angle-against-mouse [{:keys [x y]}]
   (let [dx (- @p/mouse-x x)
         dy (- @p/mouse-y y)]
-    (Math/atan (/ dy dx))))
+    (+ (when (> 0 dx) Math/PI) (Math/atan (/ dy dx)))))
 
-(defn iterate-player [{:keys [player?] :as entity}]
+(defn iterate-player [seconds {:keys [player?] :as entity}]
   (if player?
     (-> entity
-        (update :x-vel + @p/x-thrust)
-        (update :y-vel + @p/y-thrust)
+        (update :x-vel + (* seconds @p/x-thrust))
+        (update :y-vel + (* seconds @p/y-thrust))
         (assoc :angle (angle-against-mouse entity)))
     entity))
 
-(defn iterate-velocities [entities]
-  (map (comp iterate-player iterate-vel) entities))
+(defn iterate-velocities [seconds entities]
+  (map (comp (partial iterate-player seconds) (partial iterate-vel seconds)) entities))
 
 (defn setup-events []
   (.addEventListener js/document "keydown"
@@ -50,7 +51,7 @@
   (.setInterval js/window
                 ; TODO don't use setinterval
                 (fn []
-                  (swap! p/entities iterate-velocities))
+                  (when (= @global/screen :game) (swap! p/entities (partial iterate-velocities 0.02))))
                 20)
   (.addEventListener js/document "mousemove"
                      (fn [e]

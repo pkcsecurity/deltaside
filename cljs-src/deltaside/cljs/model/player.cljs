@@ -6,34 +6,34 @@
                         :angle 0
                         :x 500
                         :y 200
-                        :x-vel 1
-                        :y-vel -1}
+                        :x-vel 50
+                        :y-vel -50}
                        {:text "Someone 2"
                         :angle 0
                         :x 200
                         :y 200
-                        :x-vel 1
-                        :y-vel -1}
+                        :x-vel 50
+                        :y-vel -50}
                        {:text "Someone 3"
                         :angle 0
                         :x 300
                         :y 300
-                        :x-vel -1
-                        :y-vel -1}
+                        :x-vel -50
+                        :y-vel -50}
                        {:text "Someone 4"
                         :angle 0
                         :x 300
                         :y 400
-                        :x-vel 1
-                        :y-vel 1}]))
+                        :x-vel 50
+                        :y-vel 50}]))
 
 (def x-thrust (r/atom 0))
 
 (def y-thrust (r/atom 0))
 
-(def power 0.1)
+(def power 500)
 
-(def rpower -0.1)
+(def rpower -500)
 
 (def mouse-x (r/atom 0))
 
