@@ -45,7 +45,8 @@
                          "ArrowRight" (reset! p/x-thrust 0)
                          "ArrowLeft" (reset! p/x-thrust 0)
                          "ArrowUp" (reset! p/y-thrust 0)
-                         "ArrowDown" (reset! p/y-thrust 0))))
+                         "ArrowDown" (reset! p/y-thrust 0)
+                         nil)))
   (.setInterval js/window
                 ; TODO don't use setinterval
                 (fn []

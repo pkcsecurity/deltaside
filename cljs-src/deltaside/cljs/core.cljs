@@ -8,7 +8,7 @@
             [deltaside.cljs.router :as router]))
 
 
-(defn content []
+(defn in-game []
   [:div
    (doall (for [{:keys [x y angle text]} @p/entities]
      ^{:key text}
@@ -18,13 +18,27 @@
                     :left      x}}
       [:p text]]))])
 
+(defn join-game [id]
+  (reset! global/screen :game))
+
+(defn main-menu []
+  [:div.center.p3
+   [:div.h1.p3 "DELTASIDE"]
+   [:div.h3 "Available rooms:"]
+   (for [{:keys [id name]} @global/rooms]
+     ^{:key id}
+     [:div
+      [:a
+       {:on-click (partial join-game id)}
+       name]])])
+
 (enable-console-print!)
 
 (defn body []
   [:div
-   ;[layout/header]
-   (case @global/path
-     "/" [content]
+   (case @global/screen
+     :menu [main-menu]
+     :game [in-game]
 
      :else [:div [:p "Not found"]])])
 
