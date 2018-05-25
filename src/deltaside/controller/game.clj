@@ -31,7 +31,7 @@
   (let [board (get @model/games id)]
     (merge board {:board @(:board board)})))
 
-(defn get-all-games [id]
+(defn get-all-games []
   "Returns the current state of all games (removes atoms)"
   (let [games {}]
     (doseq [[k v] @model/games]

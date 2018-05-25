@@ -41,10 +41,10 @@
    {:uri "/api/v1/game"
     :handler allow-all
     :request-method #{:get :post}}
-   {:patterns #"/api/v1/game/[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"
+   {:patterns #"/api/v1/game/[\da-fA-F\-]{40}$"
     :handler allow-all
     :request-method :get}
-   {:patterns #"/api/v1/game/[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"
+   {:patterns #"/api/v1/game/[\da-fA-F]{40}$"
     :handler token-auth-fn
     :request-method :delete}
 
