@@ -2,18 +2,23 @@
   (:require [deltaside.cljs.model.player :as p]
             [deltaside.cljs.model.global :as global]))
 
-(defn iterate-vel [seconds {:keys [x-vel y-vel] :as entity}]
+(defn wrap-coord [coord]
+  (mod coord 500))
+
+(defn iterate-entity [seconds {:keys [x-vel y-vel] :as entity}]
   (-> entity
       (update :x + (* seconds x-vel))
-      (update :y + (* seconds y-vel))))
+      (update :y + (* seconds y-vel))
+      (update :x wrap-coord)
+      (update :y wrap-coord)))
 
 (defn angle-against-mouse [{:keys [x y]}]
   (let [dx (- @p/mouse-x x)
         dy (- @p/mouse-y y)]
     (+ (when (> 0 dx) Math/PI) (Math/atan (/ dy dx)))))
 
-(defn iterate-player [seconds {:keys [player?] :as entity}]
-  (if player?
+(defn iterate-player [seconds {:keys [type] :as entity}]
+  (if (= type :me)
     (-> entity
         (update :x-vel + (* seconds @p/x-thrust))
         (update :y-vel + (* seconds @p/y-thrust))
@@ -21,7 +26,26 @@
     entity))
 
 (defn iterate-velocities [seconds entities]
-  (map (comp (partial iterate-player seconds) (partial iterate-vel seconds)) entities))
+  (map (comp (partial iterate-player seconds)
+             (partial iterate-entity seconds)) entities))
+
+(defn get-player []
+  (first (filter #(= (:type %) :me) @p/entities)))
+
+(defn new-projectile []
+  (let [now (.getTime (js/Date.))
+        time-since (- now @p/last-projectile-time)]
+    (when (< 1000 time-since)
+      (reset! p/last-projectile-time now)
+      (let [{:keys [x-vel y-vel] :as player} (get-player)]
+        (-> player
+            (assoc :id (str "projectile-" (Math/random)))
+            (update :x + (* 0.2 x-vel))
+            (update :y + (* 0.2 y-vel))
+            (update :x-vel * 1.5)
+            (update :y-vel * 1.5)
+            (assoc :text "pew")
+            (assoc :type :projectile))))))
 
 (defn setup-events []
   (.addEventListener js/document "keydown"
@@ -48,6 +72,10 @@
                          "ArrowUp" (reset! p/y-thrust 0)
                          "ArrowDown" (reset! p/y-thrust 0)
                          nil)))
+  (.addEventListener js/document "mousedown"
+                     (fn []
+                       (if-let [projectile (new-projectile)]
+                         (swap! p/entities #(conj % projectile)))))
   (.setInterval js/window
                 ; TODO don't use setinterval
                 (fn []

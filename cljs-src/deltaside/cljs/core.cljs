@@ -10,9 +10,11 @@
 
 (defn in-game []
   [:div
-   (doall (for [{:keys [x y angle text]} @p/entities]
-     ^{:key text}
+   (doall (for [{:keys [id x y type angle color text]} @p/entities]
+     ^{:key id}
      [:div {:style {:position  "fixed"
+                    :font-weight (if (= type :me) :bold :initial)
+                    :color color
                     :transform (str "translateX(-50%) translateY(-50%) rotate(" angle "rad)")
                     :top       y
                     :left      x}}
