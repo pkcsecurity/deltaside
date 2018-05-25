@@ -9,11 +9,14 @@
 
 
 (defn content []
-  [:div {:style {:position  "fixed"
-                 :transform (str "translateX(-50%) translateY(-50%) rotate(" @p/angle "rad)")
-                 :top       @p/y
-                 :left      @p/x}}
-   [:p "SPACESHIP"]])
+  [:div
+   (doall (for [{:keys [x y angle text]} @p/entities]
+     ^{:key text}
+     [:div {:style {:position  "fixed"
+                    :transform (str "translateX(-50%) translateY(-50%) rotate(" angle "rad)")
+                    :top       y
+                    :left      x}}
+      [:p text]]))])
 
 (enable-console-print!)
 
