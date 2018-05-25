@@ -4,3 +4,4 @@
 *.xml
 .lein-repl-history
 .idea/*
+target/*

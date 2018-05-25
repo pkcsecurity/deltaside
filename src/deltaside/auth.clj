@@ -22,10 +22,33 @@
                         :authfn token-auth-fn}))
 
 (def rules
-  [{:uris ["/"]
+  [
+   ;Defaults
+   {:uris ["/"]
     :handler allow-all}
    {:pattern #"^/static/.*$"
     :handler allow-all}
+
+   ;Player routes
+   {:uri "/api/v1/player"
+    :handler allow-all
+    :request-method :get}
+   {:uri "/api/v1/player"
+    :handler token-auth-fn
+    :request-method #{:post :put :delete}}
+
+   ;Game routes
+   {:uri "/api/v1/game"
+    :handler allow-all
+    :request-method #{:get :post}}
+   {:patterns #"/api/v1/game/[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"
+    :handler allow-all
+    :request-method :get}
+   {:patterns #"/api/v1/game/[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"
+    :handler token-auth-fn
+    :request-method :delete}
+
+   ;Else
    {:pattern #"^/.*$"
     :handler deny-all}])
 

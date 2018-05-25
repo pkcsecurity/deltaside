@@ -1,7 +1,9 @@
 (ns deltaside.utils
   (:require [clojure.string :as str]
             [camel-snake-kebab.core :as csk]
-            [buddy.hashers :as hash]))
+            [buddy.hashers :as hash]
+            [cheshire.core :as json])
+  (:import [java.util UUID Base64 Date]))
 
 ; https://funcool.github.io/buddy-hashers/latest/#algorithm-tunning-params
 (def pbkdf-alg {:alg :scrypt
@@ -22,3 +24,16 @@
 ; https://closure-library.googlecode.com/git-history/docs/local_closure_goog_format_emailaddress.js.source.html#line142
 (defn valid-email? [s]
   (re-matches #"^[+a-zA-Z0-9_.!#$%&'*\/=?^`{|}~-]+@([a-zA-Z0-9-]+\.)*[a-zA-Z0-9]{2,63}$" s))
+
+(defn json->clj [json-str]
+  (json/parse-string json-str true))
+
+(defn clj->json [obj]
+  (json/generate-string obj))
+
+(defn uuid
+  ([] (UUID/randomUUID))
+  ([s]
+   (if (uuid? s)
+     s
+     (UUID/fromString s))))

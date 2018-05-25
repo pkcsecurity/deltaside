@@ -20,6 +20,8 @@
                  [camel-snake-kebab "0.4.0"]
                  [org.clojure/spec.alpha "0.1.143"]
                  [org.clojure/java.jdbc "0.7.6"]
+                 [cheshire "5.8.0"]
+                 [org.clojure/tools.logging "0.4.1"]
 
                  ;; cljs dependencies
                  [org.clojure/clojurescript "1.10.238"]
