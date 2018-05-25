@@ -5,3 +5,4 @@
 .lein-repl-history
 .idea/*
 target/*
+.idea/workspace.xml
