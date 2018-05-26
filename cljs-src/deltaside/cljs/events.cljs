@@ -9,9 +9,7 @@
 (defn iterate-entity [seconds {:keys [x-vel y-vel] :as entity}]
   (-> entity
       (update :x + (* seconds x-vel))
-      (update :y + (* seconds y-vel))
-      (update :x wrap-coord)
-      (update :y wrap-coord)))
+      (update :y + (* seconds y-vel))))
 
 (defn angle-against-mouse [{:keys [x y]}]
   (let [dx (- @p/mouse-x x)
@@ -30,9 +28,19 @@
         (assoc :angle (angle-against-mouse entity)))
     entity))
 
+(defn should-destroy? [{:keys [x y type]}]
+  (when (= type :projectile)
+    (println x y)
+    (not (and (< 0 x 500)
+              (< 0 y 500)))))
+
 (defn iterate-velocities [seconds entities]
-  (map (comp (partial iterate-player seconds)
-             (partial iterate-entity seconds)) entities))
+  (->> entities
+       (map (comp (partial iterate-player seconds)
+                  (partial iterate-entity seconds)))
+       (remove should-destroy?)
+       (map #(update % :x wrap-coord))
+       (map #(update % :y wrap-coord))))
 
 (defn get-player []
   (first (filter current-player? @p/entities)))
@@ -40,15 +48,17 @@
 (defn new-projectile []
   (let [now (.getTime (js/Date.))
         time-since (- now @p/last-projectile-time)]
-    (when (< 1000 time-since)
+    (when (< 200 time-since)
       (reset! p/last-projectile-time now)
-      (let [{:keys [x-vel y-vel] :as player} (get-player)]
+      (let [{:keys [angle] :as player} (get-player)
+            x-vel (* 200 (Math/cos angle))
+            y-vel (* 200 (Math/sin angle))]
         (-> player
             (assoc :id (str "projectile-" (Math/random)))
             (update :x + (* 0.2 x-vel))
             (update :y + (* 0.2 y-vel))
-            (update :x-vel * 1.5)
-            (update :y-vel * 1.5)
+            (assoc :x-vel x-vel)
+            (assoc :y-vel y-vel)
             (assoc :text "~")
             (assoc :type :projectile))))))
 
@@ -94,7 +104,8 @@
                   (when (= @global/screen :game) (swap! p/entities (partial iterate-velocities 0.02))))
                 20)
 
-  (.setInterval js/window update-game-board 2000)
+  (.setInterval js/window update-game-board 200000)
+  (update-game-board)
 
   (.addEventListener js/document "mousemove"
                      (fn [e]

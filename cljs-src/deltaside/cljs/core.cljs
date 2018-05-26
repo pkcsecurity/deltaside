@@ -12,13 +12,15 @@
   [:div
    (doall (for [{:keys [id x y type angle color text]} @p/entities]
      ^{:key id}
-     [:div {:style {:position  "fixed"
+     [:div {:style {:position  :fixed
+                    :white-space :nowrap
+                    :user-select :none
                     :font-weight (if (= type :me) :bold :initial)
                     :color color
                     :transform (str "translateX(-50%) translateY(-50%) rotate(" angle "rad)")
                     :top       y
                     :left      x}}
-      [:p text]]))])
+      text]))])
 
 (defn join-game [id]
   (reset! global/screen :game))
