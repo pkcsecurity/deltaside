@@ -1,6 +1,9 @@
 (ns deltaside.spec
   (:require [clojure.spec.alpha :as s]
-            [deltaside.utils :as utils]))
+            [clojure.tools.logging :as log]
+            [deltaside.utils :as utils]
+            [deltaside.http :as http]
+            [deltaside.properties :as props]))
 
 (defn explain [spec obj]
   (when-let [probs (s/explain-data spec obj)]
@@ -32,6 +35,21 @@
     #(try
        (utils/uuid %)
        (catch Exception _))))
+
+; NOTE:
+; When we are in prod, we don't want to leak info about our
+; validators.
+(defn wrap-conform-failure [handler]
+  (fn [req]
+    (try
+      (handler req)
+      (catch clojure.lang.ExceptionInfo ei
+        (log/warn (.getMessage ei))
+        (if-let [kw (::error (ex-data ei))]
+          (http/bad-request (if props/prod? (str "error: " kw) (.getMessage ei)))
+          (if props/prod?
+            http/internal-server-error
+            (throw ei)))))))
 
 
 

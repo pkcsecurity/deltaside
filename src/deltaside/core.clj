@@ -3,18 +3,24 @@
   (:require [ring.middleware.json :as json]
             [ring.middleware.file :as file]
             [ring.middleware.content-type :as ct]
-            [deltaside.auth :as roles]
+            [deltaside.auth :as auth]
             [deltaside.routes :as routes]
             [deltaside.properties :as props]
-            [immutant.web :as server]))
+            [immutant.web :as server]
+            [ring.middleware.params :as params]
+            [ring.middleware.keyword-params :as kw-params]
+            [deltaside.spec :as spec]))
 
 (def app
   (-> routes/routes
     (json/wrap-json-response)
     (json/wrap-json-body {:keywords? true})
-    (roles/wrap-security)
+    (auth/wrap-security)
     (file/wrap-file "static" {:index-files? false})
-    (ct/wrap-content-type)))
+    (kw-params/wrap-keyword-params)
+    (params/wrap-params)
+    (spec/wrap-conform-failure)))
+
 
 (defn -main [& args]
   (if props/prod?

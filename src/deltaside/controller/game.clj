@@ -1,16 +1,7 @@
 (ns deltaside.controller.game
   (:require [deltaside.model.game :as model]
-            [deltaside.utils :as utils]))
-
-;TODO make sure player-id doesn't already exist
-;TODO make sure game-id doesn't already exist
-(defn add-player [game-id player-id]
-  "Creates a new player with defaults on the game board"
-  (let [board (get @model/games game-id)
-        players (:players (:board board))
-        player (model/player-defaults)
-        new-players (assoc players player-id player)]
-    (swap! (:board board) assoc :players new-players)))
+            [deltaside.utils :as utils]
+            [deltaside.controller.player :as player-ctrl]))
 
 ;TODO make sure player-id doesn't already exist
 ;TODO make sure game-id doesn't already exist
@@ -42,7 +33,7 @@
   (let [game-id (utils/uuid)]
     (swap! model/games assoc game-id {:name name
                                       :id id})
-    (add-player game-id id)
+    ;(player-ctrl/add-player "default" game-id id)
     game-id))
 
 (defn delete-game [id]

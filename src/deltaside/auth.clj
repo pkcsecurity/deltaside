@@ -21,6 +21,7 @@
   (token/token-backend {:token-name "Bearer"
                         :authfn token-auth-fn}))
 
+;TODO Use tokens to determine ids
 (def rules
   [
    ;Defaults
@@ -34,7 +35,7 @@
     :handler allow-all
     :request-method :get}
    {:uri "/api/v1/player"
-    :handler token-auth-fn
+    :handler allow-all;token-auth-fn
     :request-method #{:post :put :delete}}
 
    ;Game routes
@@ -45,7 +46,7 @@
     :handler allow-all
     :request-method :get}
    {:patterns #"/api/v1/game/[\da-fA-F]{40}$"
-    :handler token-auth-fn
+    :handler allow-all;token-auth-fn
     :request-method :delete}
 
    ;Else

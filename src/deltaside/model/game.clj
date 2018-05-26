@@ -56,7 +56,16 @@
                                                :x-vel 50
                                                :y-vel 50}]})}})
 
-(def games (atom example-game-board)) ; TODO change back
+(def default-game-id "54947df8-0e9e-4471-a2f9-9af509fb5889")
+
+(def default-game-board {default-game-id
+                         {:name "Default DeltaSide Game"
+                          :admin -1
+                          :board (atom {:players []
+                                        :objects []})}})
+
+;TODO Make this dynamic
+(def games (atom default-game-board))
 
 (def player-defaults
    {:positon [0 0]

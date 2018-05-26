@@ -17,12 +17,15 @@
   (log/info "Retrieving all games...")
   (http/ok (ctrl/get-all-games)))
 
-(defn create-game [{{:keys [name]} :body {:keys [id]} :sub}]
-  (log/info "Creating new game...")
-  (if-let [name (spec/conform ::model/game-name name)]
+(defn create-game [{{:keys [name]} :body {:keys [id]} :sub :as all}]
+  (log/info (str"Creating new game '" name "'..."))
+  (println all)
+  (if (and
+        ;id
+        (spec/valid? ::model/game-name name))
     (let [game-id (ctrl/new-game name id)]
       (http/redirect (str "/" game-id)))
-    (http/bad-request {:error "Name must be a string between 0-256 characters"})))
+    (http/bad-request {:error "Invalid name or id."})))
 
 (defn delete-game [{:keys [route-params] {:keys [id]} :sub}]
   (log/info (str "Deleting game " id " ..."))

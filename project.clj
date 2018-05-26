@@ -11,7 +11,7 @@
                  [org.immutant/web "2.1.10"]
                  [ring/ring-core "1.6.3"]
                  [ring/ring-devel "1.6.3"]
-                 [ring/ring-json "0.5.0-beta1"]
+                 [ring/ring-json "0.4.0"]
                  [compojure "1.6.1"]
                  [buddy/buddy-auth "2.1.0"]
                  [buddy/buddy-sign "2.2.0"]
