@@ -30,7 +30,6 @@
 
 (defn should-destroy? [{:keys [x y type]}]
   (when (= type :projectile)
-    (println x y)
     (not (and (< 0 x 500)
               (< 0 y 500)))))
 

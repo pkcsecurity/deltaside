@@ -14,7 +14,9 @@
      ^{:key id}
      [:div {:style {:position  :fixed
                     :white-space :nowrap
-                    :user-select :none
+                    :user-select "none"
+                    :-moz-user-select "none"
+                    :-webkit-user-select "none"
                     :font-weight (if (= type :me) :bold :initial)
                     :color color
                     :transform (str "translateX(-50%) translateY(-50%) rotate(" angle "rad)")

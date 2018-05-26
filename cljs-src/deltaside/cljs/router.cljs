@@ -4,7 +4,7 @@
             [clojure.string :as str]))
 
 (defn set-title [t]
-  (set! (.-title js/document) (str t " | PeopleGroups.org")))
+  (set! (.-title js/document) (str t " DELTASIDE ")))
 
 (defn query-string []
   (.substring (.-search js/location) 1))
